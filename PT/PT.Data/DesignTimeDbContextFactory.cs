@@ -13,7 +13,7 @@ namespace PT.Data
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../PT.API/appsettings.json").Build();
+            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../PT.AuthorizeAPI/appsettings.json").Build();
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             IServiceCollection services = new ServiceCollection();
 

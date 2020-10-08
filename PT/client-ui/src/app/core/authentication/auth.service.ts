@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import { UserManager, UserManagerSettings, User } from 'oidc-client';
+import { UserManager, UserManagerSettings, User, Profile  } from 'oidc-client';
 import { BehaviorSubject } from 'rxjs'; 
 
 import { BaseService } from "../../shared/base.service";
@@ -25,7 +25,7 @@ export class AuthService extends BaseService  {
     super();     
     
     this.manager.getUser().then(user => { 
-      this.user = user;      
+      this.user = user;     
       this._authNavStatusSource.next(this.isAuthenticated());
     });
   }
@@ -40,7 +40,7 @@ export class AuthService extends BaseService  {
   }  
 
   register(userRegistration: any) {    
-    return this.http.post(this.configService.authApiURI + '/account', userRegistration).pipe(catchError(this.handleError));
+    return this.http.post(this.configService.authApiURI + '/api/account', userRegistration).pipe(catchError(this.handleError));
   }
 
   isAuthenticated(): boolean {
@@ -53,6 +53,10 @@ export class AuthService extends BaseService  {
 
   get name(): string {
     return this.user != null ? this.user.profile.name : '';
+  }
+
+  get profile(): any {
+    return (this.user != null && this.user.profile != null) ? this.user.profile : null;
   }
 
   async signout() {

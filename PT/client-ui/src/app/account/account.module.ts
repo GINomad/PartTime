@@ -4,6 +4,8 @@ import { FormsModule }   from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SharedModule }   from '../shared/shared.module';
+import { MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule} from '@angular/material/input';
 
 import { AccountRoutingModule } from './account.routing-module';
 import { AuthService }  from '../core/authentication/auth.service';
@@ -16,7 +18,9 @@ import { AuthService }  from '../core/authentication/auth.service';
     CommonModule,
     FormsModule,
     AccountRoutingModule,
-    SharedModule  
+    SharedModule,
+    MatInputModule,
+    MatFormFieldModule  
   ]
 })
 export class AccountModule { }

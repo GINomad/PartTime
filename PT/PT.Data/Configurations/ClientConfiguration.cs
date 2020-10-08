@@ -12,10 +12,6 @@ namespace PT.Data.Configurations
             builder.HasKey(p => p.Id);
             builder.Property(p => p.FirstName).HasMaxLength(100);
             builder.Property(p => p.LastName).HasMaxLength(100);
-            builder.Property(p => p.UserId).IsRequired();
-            builder.HasOne<ApplicationUser>()
-                .WithMany()
-                .HasForeignKey(p => p.UserId);
         }
     }
 }

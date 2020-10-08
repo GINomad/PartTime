@@ -172,6 +172,7 @@ namespace PT.AuthorizeAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout(string logoutId)
         {
+            var u = User;
             await _signInManager.SignOutAsync();
             var context = await _interaction.GetLogoutContextAsync(logoutId);
             return Redirect(context.PostLogoutRedirectUri);

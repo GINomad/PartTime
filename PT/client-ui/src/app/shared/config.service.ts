@@ -10,6 +10,6 @@ export class ConfigService {
     }    
      
     get clientApiURI() {
-        return 'https://localhost:44332/api';
+        return 'https://localhost:44362/api';
     }  
 }

@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { IndexComponent } from './index/index.component';
+import { ProfileSetupComponent } from './profile-setup/profile-setup.component';
+import { ProfileComponent } from './profile/profile.component';
 import { Shell } from '../shell/shell.service';
 import { AuthGuard } from '../core/authentication/auth.guard';
 import { ProfileGuard } from '../core/profile/profile.guard';
 
 const routes: Routes = [
   Shell.childRoutes([
-    { path: '', redirectTo: '/home', pathMatch: 'full', canActivate: [AuthGuard, ProfileGuard]},
-    { path: 'home', component: IndexComponent, canActivate: [AuthGuard, ProfileGuard]}
+    { path: 'profile-setup', component: ProfileSetupComponent, canActivate: [AuthGuard]},
+    { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard, ProfileGuard]}
   ])
 ];
 
@@ -18,4 +19,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class HomeRoutingModule { }
+export class ProfileRoutingModule { }
