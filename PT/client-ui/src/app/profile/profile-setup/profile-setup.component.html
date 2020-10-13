@@ -1,1 +1,65 @@
-<p>profile-setup works!</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <form id="profile_setup">
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>Заполните профиль</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <fieldset>
+                            <legend>Персональная информация</legend>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <mat-form-field>
+                                        <mat-label>Имя</mat-label>
+                                        <input matInput id="fname" required autocomplete="off">                           
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field>
+                                        <mat-label>Фамилия</mat-label>
+                                        <input matInput id="lname" required autocomplete="off">                           
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field color="primary">
+                                        <mat-label>Дата рождения</mat-label>
+                                        <input matInput [matDatepicker]="picker" id="dob" required autocomplete="off">
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker ></mat-datepicker>
+                                      </mat-form-field>
+                                </div>
+                            </div>
+                            
+                        </fieldset>
+                        <fieldset>
+                            <legend>Контактная информация</legend>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <mat-form-field>
+                                        <mat-label>Город</mat-label>
+                                        <input matInput id="city" required autocomplete="off">                           
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field color="primary">
+                                        <mat-label>Номер телефона</mat-label>
+                                        <input matInput  id="phone" required autocomplete="off">                                        
+                                      </mat-form-field>
+                                </div>
+                            </div>
+                            
+                        </fieldset>
+                    </mat-card-content>
+                    <mat-card-actions align="end">
+                        <button mat-raised-button class="btn-secondary" >Отменить</button>
+                        <button mat-raised-button class="btn-primary" type="submit">Сохранить</button>
+                    </mat-card-actions>
+                </mat-card>
+            </form>
+        </div>
+    </div>
+</div>
+
+

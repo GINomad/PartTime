@@ -3,7 +3,6 @@
 main > .container {
     padding: 35px 0;
 }
-
 /**
 * Generated theme by Material Theme Generator
 * https://materialtheme.arcsine.dev
@@ -91,7 +90,7 @@ $mat-dark-theme-foreground: (
 
 // Background config
 // Light bg
-$light-background:    #d8d5d5;
+$light-background:    #e7e3e3;
 $light-bg-darker-5:   darken($light-background, 5%);
 $light-bg-darker-10:  darken($light-background, 10%);
 $light-bg-darker-20:  darken($light-background, 20%);
@@ -125,8 +124,8 @@ $dark-bg-lighter-5:   lighten($dark-background, 5%);
 $dark-bg-lighter-10:  lighten($dark-background, 10%);
 $dark-bg-lighter-20:  lighten($dark-background, 20%);
 $dark-bg-lighter-30:  lighten($dark-background, 30%);
-$light-bg-alpha-4:    rgba(#d8d5d5, 0.04);
-$light-bg-alpha-12:   rgba(#d8d5d5, 0.12);
+$light-bg-alpha-4:    rgba(#e7e3e3, 0.04);
+$light-bg-alpha-12:   rgba(#e7e3e3, 0.12);
 
 // Background palette for dark themes.
 $mat-dark-theme-background: (
@@ -249,4 +248,64 @@ $altTheme: mat-dark-theme($theme-primary, $theme-accent, $theme-warn);
   .mat-badge-content {
     font-family: 'Roboto';
   }
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #ffa742;
+  border-color: #ffa742;
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+  color: #fff;
+  background-color: #ffa742;
+  border-color: #ffa742;
+  opacity: 0.7;
+}
+
+.btn-primary:active, .btn-primary:focus,.btn-primary:hover {
+  background-color: #ffb35c;
+  border-color: #ffb35c;
+}
+
+.btn-secondary {
+  color: #fff;
+  background-color: #0da1d0;
+  border-color: #0da1d0;
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+  color: #fff;
+  background-color: #0da1d0;
+  border-color: #0da1d0;
+  opacity: 0.7;
+}
+
+.btn-secondary:active, .btn-secondary:focus,.btn-secondary:hover {
+  background-color: #0da1d0;
+  border-color: #0da1d0;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color:  #ffa742;
+  border-color:  #ffa742;
+}
+
+fieldset {
+    display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 2px;
+    border-style: groove;
+    border-color: threedface;
+    border-image: initial;
+}
+legend {
+  width: auto;
 }
