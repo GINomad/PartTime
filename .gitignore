@@ -13,3 +13,5 @@
 /PT/PT.AuthorizeAPI/bin
 /PT/PT.AuthorizeAPI/obj
 /PT/.vs
+/PT/PT.Infrastructure/bin
+/PT/PT.Infrastructure/obj

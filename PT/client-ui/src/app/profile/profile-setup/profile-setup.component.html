@@ -1,10 +1,10 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <form id="profile_setup">
+            <form id="profile_setup" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
                 <mat-card>
                     <mat-card-header>
-                        <mat-card-title>Заполните профиль</mat-card-title>
+                        <mat-card-title>Прежде чем продолжить, заполните профиль</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
                         <fieldset>
@@ -13,19 +13,19 @@
                                 <div class="col-md-4">
                                     <mat-form-field>
                                         <mat-label>Имя</mat-label>
-                                        <input matInput id="fname" required autocomplete="off">                           
+                                        <input matInput id="fname" required autocomplete="off" formControlName="firstName">                           
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-4">
                                     <mat-form-field>
                                         <mat-label>Фамилия</mat-label>
-                                        <input matInput id="lname" required autocomplete="off">                           
+                                        <input matInput id="lname" required autocomplete="off" formControlName="lastName">                           
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-4">
                                     <mat-form-field color="primary">
                                         <mat-label>Дата рождения</mat-label>
-                                        <input matInput [matDatepicker]="picker" id="dob" required autocomplete="off">
+                                        <input matInput [matDatepicker]="picker" id="dob" autocomplete="off" formControlName="dateOfBirth">
                                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                         <mat-datepicker #picker ></mat-datepicker>
                                       </mat-form-field>
@@ -39,13 +39,14 @@
                                 <div class="col-md-4">
                                     <mat-form-field>
                                         <mat-label>Город</mat-label>
-                                        <input matInput id="city" required autocomplete="off">                           
+                                        <input matInput id="city" required autocomplete="off" formControlName="city">                           
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-4">
                                     <mat-form-field color="primary">
                                         <mat-label>Номер телефона</mat-label>
-                                        <input matInput  id="phone" required autocomplete="off">                                        
+                                        <span matPrefix>{{phonePrefix}} &nbsp;</span>
+                                        <input matInput  id="phone" required autocomplete="off" formControlName="phoneNumber">                                        
                                       </mat-form-field>
                                 </div>
                             </div>
@@ -53,8 +54,7 @@
                         </fieldset>
                     </mat-card-content>
                     <mat-card-actions align="end">
-                        <button mat-raised-button class="btn-secondary" >Отменить</button>
-                        <button mat-raised-button class="btn-primary" type="submit">Сохранить</button>
+                        <button mat-raised-button class="btn-primary" type="submit" [disabled]="!profileForm.valid">Сохранить</button>
                     </mat-card-actions>
                 </mat-card>
             </form>

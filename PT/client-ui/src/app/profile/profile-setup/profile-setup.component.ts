@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   MAT_MOMENT_DATE_FORMATS,
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {Country} from '@angular-material-extensions/select-country';
+import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { finalize } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/authentication/auth.service';
+import { ProfileService } from 'src/app/core/profile/profile.service';
+import {Profile} from '../../shared/models/profile/profile';
 
 @Component({
   selector: 'app-profile-setup',
@@ -29,8 +35,40 @@ import {Country} from '@angular-material-extensions/select-country';
 })
 export class ProfileSetupComponent implements OnInit {
 
-  constructor() { }
+  phonePrefix = '+38'
+  profileForm = new FormGroup({
+    firstName: new FormControl('', [
+      Validators.required
+    ]),
+    lastName: new FormControl('', [
+      Validators.required
+    ]),
+    dateOfBirth: new FormControl(''),
+    city: new FormControl('', [
+      Validators.required
+    ]),
+    phoneNumber: new FormControl('', [
+      Validators.required
+    ])
+  })
+  constructor(private profileService: ProfileService, private spinner: NgxSpinnerService, private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
+  }
+
+  onSubmit(){
+    var profile = new Profile();
+    profile = {...this.profileForm.value, phoneNumber: this.phonePrefix + this.profileForm.get("phoneNumber").value,  dateOfBirth: new Date(this.profileForm.get("dateOfBirth").value)}
+    console.log(profile);
+    this.profileService.createProfile(profile).pipe(finalize(() => {
+      this.spinner.hide();
+    }))
+    .subscribe(result =>{ 
+      if(result)
+      {
+        this.authService.setClientId(result.id);
+        this.router.navigate(['/home']);        
+      }
+    }) 
   }
 }

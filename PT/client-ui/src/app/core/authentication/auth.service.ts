@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { BaseService } from "../../shared/base.service";
 import { ConfigService } from '../../shared/config.service';
 import { UserLogin } from 'src/app/shared/models/user.login';
+import { ProfileInfo } from '../profile-info';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,10 @@ export class AuthService extends BaseService  {
 
   // Observable navItem source
   private _authNavStatusSource = new BehaviorSubject<boolean>(false);
+  private _clientIdPresenceStatusSource = new BehaviorSubject<boolean>(false);
   // Observable navItem stream
   authNavStatus$ = this._authNavStatusSource.asObservable();
+  clientIdPresenceStatus$ = this._clientIdPresenceStatusSource.asObservable();
 
   private manager = new UserManager(getClientSettings());
   private user: User | null;
@@ -27,6 +30,7 @@ export class AuthService extends BaseService  {
     this.manager.getUser().then(user => { 
       this.user = user;     
       this._authNavStatusSource.next(this.isAuthenticated());
+      this._clientIdPresenceStatusSource.next(this.hasClient());
     });
   }
 
@@ -36,7 +40,8 @@ export class AuthService extends BaseService  {
 
   async completeAuthentication() {
       this.user = await this.manager.signinRedirectCallback();
-      this._authNavStatusSource.next(this.isAuthenticated());      
+      this._authNavStatusSource.next(this.isAuthenticated());  
+      this._clientIdPresenceStatusSource.next(this.hasClient());
   }  
 
   register(userRegistration: any) {    
@@ -47,6 +52,10 @@ export class AuthService extends BaseService  {
     return this.user != null && !this.user.expired;
   }
 
+  hasClient(): boolean {
+    return this.user.profile != null && this.user.profile.client_user_id != null && this.user.profile.client_user_id != "";
+  }
+
   get authorizationHeaderValue(): string {
     return `${this.user.token_type} ${this.user.access_token}`;
   }
@@ -55,8 +64,18 @@ export class AuthService extends BaseService  {
     return this.user != null ? this.user.profile.name : '';
   }
 
-  get profile(): any {
-    return (this.user != null && this.user.profile != null) ? this.user.profile : null;
+  get profile(): ProfileInfo {
+    var profile = (this.user != null && this.user.profile != null) ? this.user.profile : null;
+    if(profile == null)
+    {
+      return null;
+    }
+    return <ProfileInfo>{id: profile.sub, clientId: profile.client_user_id}; 
+  }
+
+  setClientId(clientId: number): void{
+    this.user.profile.client_user_id = clientId;
+    this._clientIdPresenceStatusSource.next(true);
   }
 
   async signout() {

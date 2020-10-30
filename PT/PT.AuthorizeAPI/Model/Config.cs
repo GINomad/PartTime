@@ -40,7 +40,7 @@ namespace PT.API.Model
                     PostLogoutRedirectUris = {"http://localhost:4200/"},
                     AllowedCorsOrigins = {"http://localhost:4200"},
                     AllowAccessTokensViaBrowser = true,
-                    AccessTokenLifetime = 3600                    
+                    AccessTokenLifetime = 3600                  
                 }
             };
         }

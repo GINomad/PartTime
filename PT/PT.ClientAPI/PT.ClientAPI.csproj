@@ -2,14 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\PT.Core\PT.Core.csproj" />
+    <ProjectReference Include="..\PT.Identity\PT.Identity.csproj" />
+    <ProjectReference Include="..\PT.Infrastructure\PT.Infrastructure.csproj" />
   </ItemGroup>
 
 

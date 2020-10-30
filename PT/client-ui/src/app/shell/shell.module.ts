@@ -7,20 +7,21 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule} from '@angular/material/toolbar';
 import { MatIconModule} from '@angular/material/icon';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { ProfileCardComponent } from './profile-card/profile-card.component'
 
 
 
 
 @NgModule({
-  declarations: [ShellComponent, HeaderComponent],
+  declarations: [ShellComponent, HeaderComponent, ProfileCardComponent],
   imports: [
     CommonModule,
     RouterModule,
     BrowserAnimationsModule,
     MatToolbarModule,
     MatSidenavModule,
-   MatListModule,
+    MatListModule,
     MatIconModule
   ]
 })
