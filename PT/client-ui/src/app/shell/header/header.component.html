@@ -1,6 +1,6 @@
 
         <div *ngIf="isAuthenticated" >
-           <a mat-button class="p-2 text-light" (click)="signout()" href="javascript:void(0)">Signout {{name}}</a>               
+           <a mat-button class="p-2 text-light" (click)="signout()" href="javascript:void(0)">Выйти</a>               
         </div>
         <div *ngIf="!isAuthenticated"> 
           <a class="p-2 text-light" routerLink="/login">Login</a>     

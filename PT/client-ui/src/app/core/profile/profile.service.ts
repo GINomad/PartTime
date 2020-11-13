@@ -26,7 +26,5 @@ export class ProfileService extends BaseApiService {
 
   getProfile(id: number): Observable<Profile> {
     return this.http.get<Profile>(this.configService.clientApiURI + `/client/${id}`, this.httpOptions).pipe(catchError(this.handleError));
-  }
-
-  
+  }  
 }

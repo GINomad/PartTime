@@ -1,3 +1,4 @@
+@import '../../../assets/styles.scss';
 .mat-icon-button {
     padding: 0;
     min-width: 0;
@@ -58,4 +59,19 @@
 
 .auto-height {
     height: auto;
+}
+
+.pt-main-content {
+    min-height: 100%;
+    position: fixed;
+    min-width: 100%;
+    background-color: $light-background;
+}
+
+.mat-drawer-content {
+    position: relative;
+    z-index: 1;
+    display: block;
+    height: 100%;
+    overflow: visible;
 }

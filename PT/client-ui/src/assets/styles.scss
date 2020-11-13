@@ -267,6 +267,16 @@ $altTheme: mat-dark-theme($theme-primary, $theme-accent, $theme-warn);
   background-color: #ffb35c;
   border-color: #ffb35c;
 }
+.btn-primary:focus{
+  color: #fff;
+  background-color: #ffb35c;
+  border-color: #ffb35c;
+  box-shadow:0 0 0 0.2rem rgba(249, 171, 0, 0.2);
+}
+
+.btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .show > .btn-primary.dropdown-toggle:focus {
+  box-shadow:0 0 0 0.2rem rgba(249, 171, 0, 0.2);
+}
 
 .btn-secondary {
   color: #fff;

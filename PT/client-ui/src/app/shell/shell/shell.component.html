@@ -1,19 +1,6 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
-      <button  *ngIf="isAuthenticated" type="button" aria-label="Toggle sidenav" mat-icon-button="" class="pt-nav-button mat-focus-indicator mat-icon-button mat-button-base" (click)="sidenav.toggle()">
-        <span class="mat-button-wrapper">
-          <mat-icon  role="img" aria-label="Side nav toggle icon" class="mat-icon notranslate material-icons mat-icon-no-color" aria-hidden="true">menu</mat-icon>
-        </span>
-        <div matripple="" class="mat-ripple mat-button-ripple mat-button-ripple-round"></div>
-        <div class="mat-button-focus-overlay"></div>
-      </button>
-    <span>ParTTime</span>
-    <span class="menu-spacer flexExpand"></span>
-      <app-header></app-header>
-  </mat-toolbar-row>
-</mat-toolbar>
-<mat-sidenav-container>
-  <mat-sidenav #sidenav>
+
+<mat-sidenav-container fullscreen>
+  <mat-sidenav #sidenav mode="side">
     <mat-toolbar *ngIf="hasClientId" color="primary" class="mat-toolbar mat-primary auto-height justify-content-center" ><profile-card></profile-card></mat-toolbar>
     <mat-nav-list>
 
@@ -23,8 +10,21 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div style="height: 88vh;">
-
+    <mat-toolbar color="primary">
+      <mat-toolbar-row>
+          <button  *ngIf="isAuthenticated" type="button" aria-label="Toggle sidenav" mat-icon-button="" class="pt-nav-button mat-focus-indicator mat-icon-button mat-button-base" (click)="sidenav.toggle()">
+            <span class="mat-button-wrapper">
+              <mat-icon  role="img" aria-label="Side nav toggle icon" class="mat-icon notranslate material-icons mat-icon-no-color" aria-hidden="true">menu</mat-icon>
+            </span>
+            <div matripple="" class="mat-ripple mat-button-ripple mat-button-ripple-round"></div>
+            <div class="mat-button-focus-overlay"></div>
+          </button>
+        <span>ParTTime</span>
+        <span class="menu-spacer flexExpand"></span>
+          <app-header></app-header>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <div>
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
