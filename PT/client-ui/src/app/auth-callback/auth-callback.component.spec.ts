@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
 import { AuthCallbackComponent } from './auth-callback.component';
 
@@ -8,7 +9,15 @@ describe('AuthCallbackComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AuthCallbackComponent ]
+      declarations: [ AuthCallbackComponent ],
+      providers: [
+        {
+          provide: Router,
+          useValue: {
+            navigate: () => Promise.resolve(true)
+          }
+        }
+      ]
     })
     .compileComponents();
   }));

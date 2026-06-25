@@ -1,99 +1,151 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { UserManager, UserManagerSettings, User, Profile  } from 'oidc-client';
-import { BehaviorSubject } from 'rxjs'; 
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 
-import { BaseService } from "../../shared/base.service";
+import { BaseService } from '../../shared/base.service';
 import { ConfigService } from '../../shared/config.service';
 import { UserLogin } from 'src/app/shared/models/user.login';
 import { ProfileInfo } from '../profile-info';
+
+interface StoredAuthState {
+  email: string;
+  clientId?: number;
+}
+
+interface AntiforgeryTokenResponse {
+  token: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService extends BaseService  {
 
-  // Observable navItem source
+  private readonly stateStorageKey = 'pt.auth.state';
+
   private _authNavStatusSource = new BehaviorSubject<boolean>(false);
   private _clientIdPresenceStatusSource = new BehaviorSubject<boolean>(false);
-  // Observable navItem stream
+
   authNavStatus$ = this._authNavStatusSource.asObservable();
   clientIdPresenceStatus$ = this._clientIdPresenceStatusSource.asObservable();
 
-  private manager = new UserManager(getClientSettings());
-  private user: User | null;
+  private state: StoredAuthState | null;
 
-  constructor(private http: HttpClient, private configService: ConfigService) { 
-    super();     
-    
-    this.manager.getUser().then(user => { 
-      this.user = user;     
-      this._authNavStatusSource.next(this.isAuthenticated());
-      this._clientIdPresenceStatusSource.next(this.hasClient());
-    });
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    super();
+
+    this.state = this.loadState();
+    this.publishAuthState();
+    this.ensureAntiforgeryToken().subscribe(
+      () => {},
+      () => {});
   }
 
-  login() { 
-    return this.manager.signinRedirect();   
+  login(userLogin: UserLogin): Observable<any> {
+    const request = {
+      email: userLogin.email,
+      password: userLogin.password
+    };
+
+    return this.ensureAntiforgeryToken()
+      .pipe(switchMap(() => this.http.post(
+          this.configService.authApiURI + '/api/account/login?useCookies=true&useSessionCookies=true',
+          request,
+          { withCredentials: true })))
+      .pipe(
+        tap(() => this.storeState(userLogin.email)),
+        catchError(this.handleError));
   }
 
-  async completeAuthentication() {
-      this.user = await this.manager.signinRedirectCallback();
-      this._authNavStatusSource.next(this.isAuthenticated());  
-      this._clientIdPresenceStatusSource.next(this.hasClient());
-  }  
+  register(userRegistration: any): Observable<any> {
+    const request = {
+      email: userRegistration.email,
+      password: userRegistration.password
+    };
 
-  register(userRegistration: any) {    
-    return this.http.post(this.configService.authApiURI + '/api/account', userRegistration).pipe(catchError(this.handleError));
+    return this.ensureAntiforgeryToken()
+      .pipe(switchMap(() => this.http.post(
+          this.configService.authApiURI + '/api/account/register',
+          request,
+          { withCredentials: true })))
+      .pipe(catchError(this.handleError));
   }
 
   isAuthenticated(): boolean {
-    return this.user != null && !this.user.expired;
+    return this.state != null;
   }
 
   hasClient(): boolean {
-    return this.user.profile != null && this.user.profile.client_user_id != null && this.user.profile.client_user_id != "";
-  }
-
-  get authorizationHeaderValue(): string {
-    return `${this.user.token_type} ${this.user.access_token}`;
+    return this.state != null && this.state.clientId != null;
   }
 
   get name(): string {
-    return this.user != null ? this.user.profile.name : '';
+    return this.state != null ? this.state.email : '';
   }
 
-  get profile(): ProfileInfo {
-    var profile = (this.user != null && this.user.profile != null) ? this.user.profile : null;
-    if(profile == null)
-    {
+  get profile(): ProfileInfo | null {
+    if (this.state == null || this.state.clientId == null) {
       return null;
     }
-    return <ProfileInfo>{id: profile.sub, clientId: profile.client_user_id}; 
+
+    return <ProfileInfo>{ id: this.state.email, clientId: this.state.clientId };
   }
 
-  setClientId(clientId: number): void{
-    this.user.profile.client_user_id = clientId;
+  setClientId(clientId: number): void {
+    if (this.state == null) {
+      return;
+    }
+
+    this.state = { ...this.state, clientId };
+    this.saveState(this.state);
     this._clientIdPresenceStatusSource.next(true);
   }
 
-  async signout() {
-    await this.manager.signoutRedirect();
+  signout(): Observable<any> {
+    return this.ensureAntiforgeryToken()
+      .pipe(switchMap(() => this.http.post(
+          this.configService.authApiURI + '/api/account/logout',
+          {},
+          { withCredentials: true })))
+      .pipe(
+        tap(() => this.clearState()),
+        catchError(error => {
+          this.clearState();
+          return of(null);
+        }));
   }
-}
 
-export function getClientSettings(): UserManagerSettings {
-  return {
-      authority: 'https://localhost:44331/',
-      client_id: 'pt_spa',
-      redirect_uri: 'http://localhost:4200/auth-callback',
-      post_logout_redirect_uri: 'http://localhost:4200/',
-      response_type:"id_token token",
-      scope:"openid profile email client.all",
-      filterProtocolClaims: true,
-      loadUserInfo: true,
-      automaticSilentRenew: true,
-      silent_redirect_uri: 'http://localhost:4200/silent-refresh.html'
-  };
+  private ensureAntiforgeryToken(): Observable<any> {
+    return this.http.get<AntiforgeryTokenResponse>(
+      this.configService.authApiURI + '/api/antiforgery/token',
+      { withCredentials: true })
+      .pipe(tap(response => sessionStorage.setItem('pt.xsrf.token', response.token)));
+  }
+
+  private storeState(email: string): void {
+    this.state = { email };
+    this.saveState(this.state);
+    this.publishAuthState();
+  }
+
+  private loadState(): StoredAuthState | null {
+    const rawState = localStorage.getItem(this.stateStorageKey);
+    return rawState == null ? null : JSON.parse(rawState) as StoredAuthState;
+  }
+
+  private saveState(state: StoredAuthState): void {
+    localStorage.setItem(this.stateStorageKey, JSON.stringify(state));
+  }
+
+  private clearState(): void {
+    this.state = null;
+    localStorage.removeItem(this.stateStorageKey);
+    this.publishAuthState();
+  }
+
+  private publishAuthState(): void {
+    this._authNavStatusSource.next(this.isAuthenticated());
+    this._clientIdPresenceStatusSource.next(this.hasClient());
+  }
 }

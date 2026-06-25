@@ -20,7 +20,12 @@ export class ProfileCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.profileService.getProfile(this.authService.profile.clientId).subscribe(client => {
+    const profile = this.authService.profile;
+    if (profile == null || profile.clientId == null) {
+      return;
+    }
+
+    this.profileService.getProfile(profile.clientId).subscribe(client => {
       this.firstName = client.firstName;
       this.lastName = client.lastName;
     })

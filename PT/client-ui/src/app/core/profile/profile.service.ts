@@ -5,15 +5,14 @@ import { catchError } from 'rxjs/operators';
 import { BaseApiService } from 'src/app/shared/base-api.service';
 import { ConfigService } from 'src/app/shared/config.service';
 import { Profile } from 'src/app/shared/models/profile/profile';
-import { AuthService } from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService extends BaseApiService {
 
-  constructor(private http: HttpClient, private configService: ConfigService, authService: AuthService) {
-    super(authService);
+  constructor(private http: HttpClient, private configService: ConfigService) {
+    super();
   }
 
   createProfile(profile: Profile):Observable<Profile> {
