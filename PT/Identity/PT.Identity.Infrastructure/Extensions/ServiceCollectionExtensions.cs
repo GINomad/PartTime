@@ -20,10 +20,11 @@ namespace PT.Identity.Infrastructure.Extensions
 
         public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
         {
-            var builder = services.AddIdentity<User, IdentityRole>(o =>
+            services.AddIdentityApiEndpoints<User>(o =>
             {
                 o.User.RequireUniqueEmail = true;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<PtIdentityDbContext>()
             .AddDefaultTokenProviders();
 

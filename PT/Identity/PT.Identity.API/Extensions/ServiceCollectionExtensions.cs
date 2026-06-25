@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using PT.Identity.Infrastructure.Abstractions.Logging;
 using PT.Identity.Infrastructure.Logging;
-using System.Text;
 
 namespace PT.Identity.API.Extensions
 {
@@ -16,7 +14,7 @@ namespace PT.Identity.API.Extensions
 
             return services;
         }
-        
+
         public static IServiceCollection ConfigureControllers(this IServiceCollection services)
         {
             services.AddControllers(config =>
@@ -29,6 +27,7 @@ namespace PT.Identity.API.Extensions
 
             return services;
         }
+
         public static IServiceCollection ConfigureResponseCaching(this IServiceCollection services)
         {
             services.AddResponseCaching();
@@ -36,27 +35,51 @@ namespace PT.Identity.API.Extensions
             return services;
         }
 
-        public static IServiceCollection ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureCors(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtConfig = configuration.GetSection("jwtConfig");
-            var secretKey = jwtConfig["secret"];
-            services.AddAuthentication(opt =>
+            var allowedOrigins = configuration
+                .GetSection("Cors:AllowedOrigins")
+                .Get<string[]>()
+                ?? Array.Empty<string>();
+
+            services.AddCors(options =>
             {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.AddPolicy("ClientUi", policy =>
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtConfig["validIssuer"],
-                    ValidAudience = jwtConfig["validAudience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-                };
+                    policy
+                        .WithOrigins(allowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection ConfigureApplicationCookies(this IServiceCollection services)
+        {
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "PT.Identity.Auth";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.SlidingExpiration = true;
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection ConfigureAntiforgeryProtection(this IServiceCollection services)
+        {
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "X-XSRF-TOKEN";
+                options.Cookie.Name = "PT.Identity.XSRF";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             return services;
@@ -75,14 +98,12 @@ namespace PT.Identity.API.Extensions
 
                 c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                c.AddSecurityDefinition("IdentityCookie", new OpenApiSecurityScheme
                 {
-                    Name = "Authorization",
+                    Name = "PT.Identity.Auth",
                     Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme."
+                    In = ParameterLocation.Cookie,
+                    Description = "ASP.NET Core Identity application cookie."
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -93,10 +114,10 @@ namespace PT.Identity.API.Extensions
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
+                                Id = "IdentityCookie"
                             }
                         },
-                        new string[] {}
+                        Array.Empty<string>()
                     }
                 });
             });

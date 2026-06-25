@@ -18,7 +18,7 @@ namespace PT.Identity.Infrastructure.Database.Users.Repositories
             var userEntity = new User
             {
                 Email = user.UserName,
-
+                UserName = user.UserName
             };
 
             var result = await _userManager.CreateAsync(userEntity, user.Password);

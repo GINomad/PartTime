@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { ConfigService } from './shared/config.service';
 import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import {A11yModule} from '@angular/cdk/a11y';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -23,6 +24,7 @@ import { ProfileModule }   from './profile/profile.module';
 /* End Modules */
 import { AuthGuard } from './core/authentication/auth.guard';
 import { ProfileGuard } from './core/profile/profile.guard';
+import { XsrfInterceptor } from './core/authentication/xsrf.interceptor';
 
 
 @NgModule({
@@ -51,7 +53,12 @@ import { ProfileGuard } from './core/profile/profile.guard';
   providers: [
     ConfigService,
     AuthGuard,
-    ProfileGuard
+    ProfileGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: XsrfInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

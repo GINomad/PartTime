@@ -1,7 +1,7 @@
 export class UserLogin {
 
     constructor(
-        public username: string,
+        public email: string,
         public password: string,
         public rememberLogin: boolean,
         public returnUrl: string          

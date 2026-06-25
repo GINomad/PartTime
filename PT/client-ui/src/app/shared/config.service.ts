@@ -6,7 +6,7 @@ export class ConfigService {
     constructor() {}
 
     get authApiURI() {
-        return 'https://localhost:44331';
+        return 'https://localhost:7271';
     }    
      
     get clientApiURI() {
